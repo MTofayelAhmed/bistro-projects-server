@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://kit.fontawesome.com/b2f0a23956.js" crossorigin="anonymous"></script>
+  <title>flex practice</title>
+  <style>
+    nav{
+      display: flex;
+      justify-content: space-between;
+    }
+    .form-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      width: 40%;
+      margin-left: 20px;
+    }
+
+    .login-form input {
+      margin-top: 20px;
+      padding: 10px 15px;
+    }
+
+    .login-form input[type="submit"] {
+      background-color: goldenrod;
+      color: whitesmoke;
+      border: none;
+      border-radius: 5px;
+      font-weight: 700;
+      font-size: 20px;
+
+    }
+
+    nav a {
+      text-decoration: none;
+      color: black;
+      font-size: 25px;
+      margin-right: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <span>
+        <a href="">home</a>
+        <a href="">Dash-board</a>
+        <a href="">inventory</a>
+      </span>
+      <span>
+        <a href=""><i class="fa-regular fa-user"></i></a>
+        <a href=""><i class="fa-solid fa-right-from-bracket"></i></a>
+      </span>
+
+    </nav>
+  </header>
+  <section class="form-container">
+    <form action="" class="login-form">
+      <h1>please login</h1>
+      <input type="email" name="" id="" placeholder="your email " required>
+      <input type="password" name="" id="" placeholder="password" required>
+      <input type="submit" value="login">
+    </form>
+  </section>
+</body>
+
+</html>

@@ -1,0 +1,65 @@
+/* define grid area */
+.header {
+  grid-area: header;
+}
+
+.nav {
+  grid-area: nav;
+}
+
+.main {
+  grid-area: main;
+}
+
+.aside {
+  grid-area: aside;
+}
+
+.add {
+  grid-area: add;
+
+}
+
+.footer {
+  grid-area: footer;
+}
+
+/* grid layout related styles
+ */
+.grid-container {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: 1fr 4fr 1fr;
+  grid-template-areas:
+    "header header header header"
+    "nav main main aside"
+    "nav main main add"
+    "footer footer footer footer";
+}
+.header, .footer, .main, .add, .nav, .aside{
+  background-color: bisque;
+}
+@media screen and (max-width: 576px){
+  .grid-container{
+    grid-template-columns: 1fr;
+    grid-template-areas:
+    "header"
+    "nav "
+    "main"
+    "aside"
+    "add"
+    "footer"
+  }
+}
+@media screen  and (min-width: 577px) and (max-width: 992px){
+  .grid-container {
+    
+    grid-template-columns: 1fr 2fr;
+    grid-template-areas:
+      "header header header"
+      "nav nav nav"
+      "aside main  main"
+      "add footer footer";
+  }
+  
+}

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body{
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+  .container-two{
+    display: flex;
+  }
+  .container-two .split{
+    width: 50%;
+  }
+  .split img{
+    width: 100%;
+  }
+  @media screen and (max-width: 576px)  {
+    .container-two{
+      flex-direction: column;
+    }
+    .container-two .split{
+    width: 100%;
+  }
+
+  }
+ 
+
+  </style>
+</head>
+
+<body>
+  <!-- css relative unit -->
+  <section>
+    <div class="container-two">
+      <div class="split">
+        <img src="/images/food.jpg" alt="">
+      </div>
+      <div class="split">
+        <img src="/images/tiger.png" alt="">
+      </div>
+    </div>
+  </section>
+  
+</body>
+
+</html>
