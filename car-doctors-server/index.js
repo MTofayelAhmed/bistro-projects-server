@@ -1,4 +1,6 @@
 const express = require("express");
+
+const jwt = require('jsonwebtoken')
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const app = express();
 const cors = require("cors");
@@ -6,6 +8,9 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 require("dotenv").config();
+
+
+
 
 const uri = `mongodb+srv://${process.env.S3_BUCKET}:${process.env.SECRET_KEY}@cluster0.qhvkztn.mongodb.net/?retryWrites=true&w=majority`;
 
@@ -31,6 +36,16 @@ async function run() {
       .db("carDoctorServer")
       .collection("bookings");
 
+      // JWT
+
+      app.post('/jwt', (req, res)=>{
+        const user= req.body;
+        console.log(user)
+        const token = jwt.sign(user, process.env.ACCESS_TOKEN, {expiresIn: '1hr'})
+        res.send({token})
+
+      })
+
     app.get("/services", async (req, res) => {
       const cursor = serviceCollection.find();
       const result = await cursor.toArray();
@@ -49,6 +64,8 @@ async function run() {
       res.send(result);
     });
     app.get("/bookings", async (req, res) => {
+console.log(req.headers.authorization)
+
       let query = {};
       if (req.query.email) {
         query = { email: req.query.email };
@@ -76,7 +93,17 @@ async function run() {
 
 
     app.patch('/bookings/:id', async(req, res)=> {
-      const updateBooking = req.body
+      const id = req.params.id
+      const updateBooking = req.body;
+      const filter = {_id: new ObjectId(id)}
+      const updateDoc = {
+        $set: {
+       status: updateBooking.status
+
+        },
+      };
+      const result = await bookingCollection.updateOne(filter, updateDoc);
+      res.send(result)
     })
 
     // Send a ping to confirm a successful connection
