@@ -41,6 +41,22 @@ const verifyJWT = (req, res, next) => {
   });
 };
 
+// const verifyJWT  = (req, res, next)=>{
+//   console.log('hitting the JWT')
+//   const authorization = req.headers.authorization
+//   if(!authorization){
+//     return res.send({error: true, message: "unauthorized Access"})
+//   }
+//   const token= authorization.split(' ')[1]
+//   jwt.verify(token, process.env.ACCESS_TOKEN, (error, decoded)=>{
+//     if(error){
+//       res.send({error:true, message: "not verified token"})
+//     }
+//     req.decoded= decoded
+//     next()
+//   })
+// }
+
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
@@ -65,8 +81,25 @@ async function run() {
       res.send({ token });
     });
 
+  // app.post('jwt', (req, res)=>{
+  //   const user = req.body;
+  //   const token = jwt.sign(user, process.env.ACCESS_TOKEN, {expiresIn: '1hr'})
+  //   res.send(token)
+  // })
+
     app.get("/services", async (req, res) => {
-      const cursor = serviceCollection.find();
+      const sort = req.query.sort
+      const search = req.query.search
+      const query = {title: {$regex: search, $options: 'i'}}
+      // const query = {}
+      // const query = { price: { $lt: 100 } };
+  
+      const options = {
+        // sort returned documents in ascending order by title (A->Z)
+        sort: {"price": sort === 'asc' ? 1 : -1 }
+       
+      };
+      const cursor = serviceCollection.find( query, options);
       const result = await cursor.toArray();
       res.send(result);
     });
