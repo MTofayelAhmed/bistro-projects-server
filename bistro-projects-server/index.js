@@ -8,7 +8,7 @@ require("dotenv").config();
 app.use(cors());
 app.use(express.json());
 
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const uri = `mongodb+srv://${process.env.S3_BUCKET}:${process.env.SECRET_KEY}@cluster0.qhvkztn.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -28,6 +28,9 @@ async function run() {
     const menuCollection = client
       .db("bistro-restaurant")
       .collection("bistroMenu");
+    const usersCollection = client
+      .db("bistro-restaurant")
+      .collection("bistroUsers");
     const reviewCollection = client
       .db("bistro-restaurant")
       .collection("bistro-Review");
@@ -35,10 +38,18 @@ async function run() {
       .db("bistro-restaurant")
       .collection("bistroCarts");
 
+app.post ('/users', async(req, res)=> {
+  const user = req.body;
+  const result = await usersCollection.insertOne(user)
+  res.send(result)
+})
+
+// menu apis
     app.get("/menu", async (req, res) => {
       const result = await menuCollection.find().toArray();
       res.send(result);
     });
+    // review API
     app.get("/reviews", async (req, res) => {
       const result = await reviewCollection.find().toArray();
       res.send(result);
@@ -62,6 +73,13 @@ async function run() {
       const result = await cartCollection.insertOne(doc);
       res.send(result);
     });
+
+    app.delete('/carts/:id', async(req, res)=> {
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}
+      const result = await cartCollection.deleteOne(query)
+      res.send(result)
+    })
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
