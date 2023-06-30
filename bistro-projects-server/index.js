@@ -64,10 +64,21 @@ async function run() {
       res.send({ token });
     });
 
+    // verify admin
+    const verifyAdmin = async (req, res, next) => {
+      const email = req.decoded.email;
+      const query = { email: email };
+      const user = await usersCollection.findOne(query);
+      if (user?.role !== "admin") {
+        return res.status(403).send({ error: true, message: 'forbidden message ' });
+      }
+      next()
+    };
+
     app.post("/users", async (req, res) => {
       const user = req.body;
       const query = { email: user.email };
-      const existingUser = usersCollection.findOne(query);
+      const existingUser = await usersCollection.findOne(query);
       if (existingUser) {
         return res.send({ message: "user already exists" });
       }
@@ -75,7 +86,7 @@ async function run() {
       res.send(result);
     });
 
-    app.get("/users", async (req, res) => {
+    app.get("/users", verifyJwt, verifyAdmin, async (req, res) => {
       const result = await usersCollection.find().toArray();
       res.send(result);
     });
@@ -112,6 +123,15 @@ async function run() {
       const result = await menuCollection.find().toArray();
       res.send(result);
     });
+
+    app.post('/menu', async (req, res) => {
+      const newItem = req.body;
+      const result = await menuCollection.insertOne(newItem)
+      res.send(result)
+    })
+
+
+
     // review API
     app.get("/reviews", async (req, res) => {
       const result = await reviewCollection.find().toArray();
