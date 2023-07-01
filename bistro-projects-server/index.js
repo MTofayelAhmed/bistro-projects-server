@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const stripe = require('stripe')(process.env.PAYMENT_SECRET_KEY)
+const stripe = require('stripe')('sk_test_51NOxpNSEmrqpRuFuR3zCGcn1Rex5t76wEk9YRQEwyRiZbTy1o42SwtwVGTk01jLPBLpYIN1cDocObMFBjdGlg9CJ005dC7QWqp')
 const jwt = require("jsonwebtoken");
 const cors = require("cors");
 const port = process.env.PORT || 5000;
@@ -56,7 +56,7 @@ async function run() {
     const cartCollection = client
       .db("bistro-restaurant")
       .collection("bistroCarts");
-
+      const paymentCollection = client.db("bistro-restaurant").collection("bistroPayments");
     app.post("/jwt", (req, res) => {
       const user = req.body;
       const token = jwt.sign(user, process.env.ACCESS_TOKEN, {
@@ -184,13 +184,19 @@ async function run() {
         const paymentIntent = await stripe.paymentIntents.create({
           amount: amount,
           currency: 'usd',
-          payment_method_types: ['card']
+   
+          payment_method_types: ['card'],
+          description: 'Payment for goods',
+
         });
   
         res.send({
           clientSecret: paymentIntent.client_secret
         })
       })
+
+
+
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
