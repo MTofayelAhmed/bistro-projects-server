@@ -56,7 +56,7 @@ async function run() {
     const cartCollection = client
       .db("bistro-restaurant")
       .collection("bistroCarts");
-      const paymentCollection = client.db("bistro-restaurant").collection("bistroPayments");
+    const paymentCollection = client.db("bistro-restaurant").collection("bistroPayments");
     app.post("/jwt", (req, res) => {
       const user = req.body;
       const token = jwt.sign(user, process.env.ACCESS_TOKEN, {
@@ -132,9 +132,9 @@ async function run() {
     })
 
     // due to menu collection manual id , we set query without objectId(id)
-    app.delete('/menu/:id', verifyJwt, verifyAdmin, async (req, res)=>{
-      const id = req.params.id; 
-      const query = {_id: (id) }
+    app.delete('/menu/:id', verifyJwt, verifyAdmin, async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: (id) }
       const result = await menuCollection.deleteOne(query)
       res.send(result)
     })
@@ -177,25 +177,25 @@ async function run() {
       res.send(result);
     });
 
-      // create payment intent
-      app.post('/create-payment-intent', verifyJwt, async (req, res) => {
-        const { price } = req.body;
-        const amount = parseInt(price * 100);
-        const paymentIntent = await stripe.paymentIntents.create({
-          amount: amount,
-          currency: 'usd',
-   
-          payment_method_types: ['card'],
-          description: 'Payment for goods',
+    // create payment intent
+    app.post('/create-payment-intent', verifyJwt, async (req, res) => {
+      const { price } = req.body;
+      const amount = parseInt(price * 100);
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: amount,
+        currency: 'usd',
 
-        });
-  
-        res.send({
-          clientSecret: paymentIntent.client_secret
-        })
+        payment_method_types: ['card'],
+        description: 'Payment for goods',
+
+      });
+
+      res.send({
+        clientSecret: paymentIntent.client_secret
       })
+    })
 
-      // payment related api
+    // payment related api
     app.post('/payments', verifyJwt, async (req, res) => {
       const payment = req.body;
       const insertResult = await paymentCollection.insertOne(payment);
@@ -206,7 +206,16 @@ async function run() {
       res.send({ insertResult, deleteResult });
     })
 
-
+    app.get('/admin-stats', verifyJwt, verifyAdmin, async (req, res) => {
+      const users = await usersCollection.estimatedDocumentCount()
+      const products = await menuCollection.estimatedDocumentCount()
+      const orders = await paymentCollection.estimatedDocumentCount()
+      const payments = await paymentCollection.find().toArray()
+      const revenue = payments.reduce((sum, payment)=> sum + payment.price, 0)
+      res.send({
+        users, products, orders, revenue
+      })
+    })
 
 
     // Send a ping to confirm a successful connection
